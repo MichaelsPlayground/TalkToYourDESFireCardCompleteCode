@@ -1,5 +1,16 @@
 # Talk to your Mifare DESFire EV1/EV2/EV3 card
 
+# THIS IS THE COMPLETE CODE VERSION
+
+This repository contains code for a lot of operations that were tested while developing. This is not a final version so for some parts 
+it is unfinished and some parts are working properly.
+
+USE THIS REPOSITORY WITH CAUTION.
+
+The TalkToYourDESFireCard repository does contain valid code only. 
+
+## Description
+
 This is a sample app to demonstrate how to work with a Mifare DESFire EV1/EV2/EV3 card. 
 
 For simplicity this app uses a DESFire tag with **factory settings** means:
