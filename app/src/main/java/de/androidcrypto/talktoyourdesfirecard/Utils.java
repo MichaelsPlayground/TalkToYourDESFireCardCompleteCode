@@ -311,6 +311,27 @@ System.out.println(i2); // 234
         return bytes[3] << 24 | (bytes[2] & 0xFF) << 16 | (bytes[1] & 0xFF) << 8 | (bytes[0] & 0xFF);
     }
 
+    public static byte[] longTo8Bytes(long l) {
+        final int LongBYTES = 8;
+        byte[] result = new byte[LongBYTES];
+        for (int i = LongBYTES - 1; i >= 0; i--) {
+            result[i] = (byte)(l & 0xFF);
+            l >>= Byte.SIZE;
+        }
+        return result;
+    }
+
+    public static long byte8ArrayToLong(final byte[] b) {
+        final int LongBYTES = 8;
+        long result = 0;
+        for (int i = 0; i < LongBYTES; i++) {
+            result <<= Byte.SIZE;
+            result |= (b[i] & 0xFF);
+        }
+        return result;
+    }
+
+
     /**
      * splits a byte array in chunks
      *

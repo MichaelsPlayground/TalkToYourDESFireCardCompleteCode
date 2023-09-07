@@ -53,6 +53,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -654,7 +655,30 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
                 clearOutputFields();
                 String logString = "Test";
                 writeToUiAppend(output, logString);
-                desfireEv3.test();
+                //desfireEv3.test();
+
+                /*
+                we need to setup an option in build.gradle (app)_
+                compileOptions {
+                    // Flag to enable support for the new language APIs, important for timestamps
+                    coreLibraryDesugaringEnabled true
+                    sourceCompatibility JavaVersion.VERSION_1_8
+                    targetCompatibility JavaVersion.VERSION_1_8
+                }
+                 */
+
+                // test some time methods
+                Instant instant = Instant.now();
+                long instantLong = instant.getEpochSecond();
+                byte[] instant8Bytes = Utils.longTo8Bytes(instantLong);
+                long instantLong2 = Utils.byte8ArrayToLong(instant8Bytes);
+
+
+
+                }
+
+
+
             }
         });
 
