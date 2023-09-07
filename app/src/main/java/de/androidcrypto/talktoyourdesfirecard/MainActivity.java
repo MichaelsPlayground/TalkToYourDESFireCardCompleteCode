@@ -1,5 +1,6 @@
 package de.androidcrypto.talktoyourdesfirecard;
 
+import static java.time.LocalDateTime.now;
 import static de.androidcrypto.talktoyourdesfirecard.Utils.byteArrayLength4InversedToInt;
 import static de.androidcrypto.talktoyourdesfirecard.Utils.byteToHex;
 import static de.androidcrypto.talktoyourdesfirecard.Utils.bytesToHexNpeUpperCase;
@@ -53,9 +54,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import de.androidcrypto.talktoyourdesfirecard.nfcjlib.AES;
 import de.androidcrypto.talktoyourdesfirecard.nfcjlib.TripleDES;
@@ -665,18 +676,76 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
                     sourceCompatibility JavaVersion.VERSION_1_8
                     targetCompatibility JavaVersion.VERSION_1_8
                 }
+                ..
+                dependencies {
+                    [...]
+                    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+                    [...]
+                }
                  */
 
                 // test some time methods
+                //Date dateNow = new Date();
                 Instant instant = Instant.now();
-                long instantLong = instant.getEpochSecond();
-                byte[] instant8Bytes = Utils.longTo8Bytes(instantLong);
+                long instantLong1 = instant.getEpochSecond();
+                byte[] instant8Bytes = Utils.longTo8Bytes(instantLong1);
                 long instantLong2 = Utils.byte8ArrayToLong(instant8Bytes);
 
+                Locale userLocale = Locale.getDefault();
+                //DateTimeFormatter.ISO_DATE.format(instantLong);
+                DateTimeFormatter yyyyMmDd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                Timestamp ts1 = new Timestamp(instantLong1 * 1000);
+                Timestamp ts2 = new Timestamp(instantLong2 * 1000);
+                String str1 = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(ts1);
+                String str2 = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.CANADA_FRENCH).format(ts2);
+                Log.d(TAG, "Date/Time 1: " + str1);
+                Log.d(TAG, "Date/Time 2: " + str2);
+                Date date1 = new Date(instantLong1 * 1000);
+                Date date2 = new Date(instantLong2 * 1000);
+                String strD1 = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(date1);
+                String strD2 = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(date2);
+                Log.d(TAG, "Date/Time D1: " + strD1);
+                Log.d(TAG, "Date/Time D2: " + strD2);
+
+                Date date = new Date(instantLong2 * 1000);
+                Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+                String strD3 = format.format(date);
+                Log.d(TAG, "Date/Time D3: " + strD3);
+
+                ZoneId usersTimeZone = ZoneId.of("Asia/Tashkent");
+                ZoneId utcTimeZone = ZoneId.of("UTC");
+                // https://docs.oracle.com/javase/8/docs/api/java/util/Locale.html
+                Locale usersLocale = Locale.forLanguageTag("ga-IE");
+                DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                        .withLocale(usersLocale);
+                //ZonedDateTime zonedDateTime = ZonedDateTime.now(usersTimeZone) ;
+                ZonedDateTime zonedDateTime = ZonedDateTime.now(utcTimeZone);
+                String strD4 = zonedDateTime.format(formatter);
+                Log.d(TAG, "Date/Time D4: " + strD4);
+                long zonedDateTimeLong = zonedDateTime.toEpochSecond();
+
+                Instant i = Instant.ofEpochSecond(zonedDateTimeLong);
+                ZonedDateTime zonedDateTimeRecovered = ZonedDateTime.ofInstant(i, utcTimeZone);
+                String strD4R = zonedDateTimeRecovered.format(formatter);
+                Log.d(TAG, "Date/Time D4R: " + strD4R);
 
 
-                }
+                String strD5 = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", usersLocale).format(date1);
+                Log.d(TAG, "Date/Time D5: " + strD5);
+                long zoneDatedTimeLong = zonedDateTime.toInstant().toEpochMilli();
+                //ZonedDateTime zonedDateTime2 = ZonedDateTime.
 
+                byte[] tsNow = Utils.getActualInstant8Bytes();
+                String tsD1 = Utils.getTimestampString19Chars(tsNow);
+                String tsD2 = Utils.getTimestampString15Chars(tsNow);
+                Log.d(TAG, "tsD1: " + tsD1);
+                Log.d(TAG, "tsD2: " + tsD2);
+
+                byte[] tzdt = Utils.getActualZonedDateTime8Bytes();
+                Log.d(TAG, "short : " + Utils.getZoneDatedStringShortDefault(tzdt));
+                Log.d(TAG, "medium: " + Utils.getZoneDatedStringMediumDefault(tzdt));
+                Log.d(TAG, "long  : " + Utils.getZoneDatedStringLongDefault(tzdt));
+                Log.d(TAG, "full  : " + Utils.getZoneDatedStringFullDefault(tzdt));
 
 
             }
